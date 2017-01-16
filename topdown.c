@@ -13,21 +13,34 @@
 const unsigned char *keyboard;
 
 void render_base_room(SDL_Renderer *r) {
-    SDL_Rect dstrect;
-    for (int i = 16; i < (768); i += 32){
-        for (int ii = 16; ii < 1024; ii += 32) {
-            dstrect.y = i;
-            dstrect.x = ii;
-            if (i == 16 || i == 768-16
-                || ii == 16 || ii == 1024-16) {
+    static SDL_Texture *room = NULL;
+
+    SDL_Rect dstrect= {0, 0, 0, 0} ;
+    if (!room) {
+        room = SDL_CreateTexture(r, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, 1024, 768);
+        SDL_SetRenderTarget(r, room);
+        for (int i = 16; i < (768); i += 32){
+            for (int ii = 16; ii < 1024; ii += 32) {
+                dstrect.y = i;
+                dstrect.x = ii;
+                if (i == 16 || i == 768-16
+                    || ii == 16 || ii == 1024-16) {
                 
-                draw_sprite(r, SS_BASIC, 0, 0, &dstrect);
-            }
-            else {
-                draw_sprite(r, SS_BASIC, 0, 1, &dstrect);   
+                    draw_sprite(r, SS_BASIC, 0, 0, &dstrect);
+                }
+                else {
+                    draw_sprite(r, SS_BASIC, 0, 1, &dstrect);   
+                }
             }
         }
+
+        SDL_SetRenderTarget(r, NULL);
     }
+    else {
+//        dstrect = (SDL_Rect){0, 0, 1024, 768};
+        SDL_RenderCopy(r, room, NULL, NULL);
+    }
+    
 }
 
 
@@ -44,16 +57,19 @@ int main(int argc, char **argv) {
     init_spritesheets(r);
     bool done = false;
     Entity *player = new_player(512, 384);
+
+
     while (!done) {
+        uint32_t start_time = SDL_GetTicks();
         SDL_Event e;
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {done = true;}
         }
 
         keyboard = SDL_GetKeyboardState(NULL);
-        player->update(player, 1000/60);
+        player->update(player, 1000.0/60);
         if (entities[0])
-            entities[0]->update(entities[0], 1000/60);
+            entities[0]->update(entities[0], 1000.0/60);
         SDL_RenderClear(r);
     
         render_base_room(r);
@@ -62,7 +78,10 @@ int main(int argc, char **argv) {
         if (entities[0])
             entities[0]->render(entities[0], r);
         SDL_RenderPresent(r);
-        SDL_Delay(1000/60);
+
+        uint32_t sleeptime = 1000/60.0 - (start_time - SDL_GetTicks());
+        printf("%d\n", sleeptime);
+        SDL_Delay(sleeptime);
 //        SDL_Delay(2000);
     }
     IMG_Quit();
