@@ -74,23 +74,27 @@ static void update(Component *self, Entity *e, int dt) {
     else
         p->invincible = p->invincible == 0 ? p->invincible : p->invincible-1;
 
+    Entity *bullet= NULL;
     if (keyboard[SDL_SCANCODE_W]) {
-        entities[0] = new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
+        bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
                                  p->ySpeed, DIR_N, TEAM_PLAYER);
     }
     else if (keyboard[SDL_SCANCODE_D]) {
-        entities[0] = new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
+        bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
                                  p->ySpeed, DIR_E, TEAM_PLAYER);        
     }
     else if (keyboard[SDL_SCANCODE_S]) {
-        entities[0] = new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
+        bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
                                  p->ySpeed, DIR_S, TEAM_PLAYER);
     }
     else if (keyboard[SDL_SCANCODE_A]) {
-        entities[0] = new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
+        bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
                                  p->ySpeed, DIR_W, TEAM_PLAYER);
     }
 
+    if (bullet)
+        add_entity(bullet);
+    
     p->position.x += p->xSpeed;
     p->position.y += p->ySpeed;
 
@@ -106,7 +110,8 @@ Entity *new_player(SDL_Renderer *r, int x, int y) {
 
     ret->render = malloc(sizeof(Component));
     *ret->render = (Component){.update = update, .cleanup = cleanup};
-    
+
+    ret->components = new_component_hash();
 /*    ret->update = update;
     ret->render = render;
     ret->cleanup = cleanup;

@@ -31,7 +31,7 @@ static uint32_t hash(const char *string, uint32_t modvalue) {
     return h % modvalue;
 }
 
-void ch_delete(struct ComponentHash *h, char *string) {
+void ch_delete(ComponentHash *h, char *string) {
     uint32_t offset = hash(string, BUCKET_SIZE);
 
     ComponentNode *cur = &(h->components[offset]), *tail = NULL;
@@ -58,7 +58,7 @@ void ch_delete(struct ComponentHash *h, char *string) {
     }
 }
 
-Component *ch_get(struct ComponentHash *h, char *string) {
+Component *ch_get(ComponentHash *h, char *string) {
     uint32_t offset = hash(string, BUCKET_SIZE);
     ComponentNode *cur = &(h->components[offset]);
     while (cur) {
@@ -70,7 +70,7 @@ Component *ch_get(struct ComponentHash *h, char *string) {
     return NULL;
 }
 
-void ch_insert(struct ComponentHash *h, const char *key, Component c) {
+void ch_insert(ComponentHash *h, const char *key, Component c) {
     uint32_t offset = hash(key, BUCKET_SIZE);
 
     ComponentNode *cur = h->components[offset].next, *tail = &(h->components[offset]);
@@ -85,6 +85,7 @@ void ch_insert(struct ComponentHash *h, const char *key, Component c) {
     cur->key = malloc(keylen);
     snprintf(cur->key, keylen, "%s", key);
     cur->c = c;
+    cur->next = NULL;
 }
 
 void ch_iter(ComponentHash *h, ch_iterator i, void *data) {
@@ -92,6 +93,7 @@ void ch_iter(ComponentHash *h, ch_iterator i, void *data) {
         ComponentNode *cur = h->components[c].next;
         while (cur) {
             i(&cur->c, data);
+            cur = cur->next;
         }
     }
 }

@@ -6,11 +6,6 @@
 //typedef void (*renderfun)(struct Entity *self, struct SDL_Renderer *r);
 
 typedef struct Entity {
-    /* renderfun render; */
-    /* updatefun update; */
-    /* cleanupfun cleanup; */
-    /* SDL_Rect position; */
-    /* int health; */
     int id;
     
     EventQueue events;
@@ -24,4 +19,5 @@ Entity *entities[256];
 void add_entity(Entity *e);
 
 void delete_entity(int id);
+void delete_clear(void);
 #endif

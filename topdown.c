@@ -26,7 +26,6 @@ void render_base_room(SDL_Renderer *r) {
                 dstrect.x = ii;
                 if (i == 16 || i == 768-16
                     || ii == 16 || ii == 1024-16) {
-                
                     draw_sprite(r, SS_BASIC, 0, 0, &dstrect);
                 }
                 else {
@@ -44,6 +43,9 @@ void render_base_room(SDL_Renderer *r) {
     
 }
 
+void update_components(Component *c, void *data) {
+    c->update(c, (Entity*)data, 1000.0/60);
+}
 
 int main(int argc, char **argv) {
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -57,7 +59,12 @@ int main(int argc, char **argv) {
 
     init_spritesheets(r);
     bool done = false;
-    Entity *player = new_player(r, 512, 384);
+    for (int i = 0; i < 256; i++)
+    {
+        entities[i] = NULL;
+    }
+    delete_clear();
+    add_entity(new_player(r, 512, 384));
 
 
     while (!done) {
@@ -73,21 +80,18 @@ int main(int argc, char **argv) {
     
         render_base_room(r);
 
-        player->render->update(player->render, player, 1000.0/60);
-        if (entities[0]) {
-            Component *c = ch_get(entities[0]->components, "bullet");
-            c->update(c, entities[0], 1000.0/60);
-            
-            c = ch_get(entities[0]->components, "position");
-            c->update(c, entities[0], 1000.0/60);
-
-            entities[0]->render->update(entities[0]->render, entities[0], 1000.0/60);
+        for (int i = 0; i < 256 && entities[i]; i++) {
+            ch_iter(entities[i]->components, update_components, entities[i]);
+            entities[i]->render->update(entities[i]->render, entities[i], 1000.0/60);
         }
+//        printf("Done frame\n");
+        delete_commit();
         SDL_RenderPresent(r);
 
         uint32_t sleeptime = 1000/60.0 - (start_time - SDL_GetTicks());
-        printf("%d\n", sleeptime);
-        SDL_Delay(sleeptime);
+//        printf("%d\n", sleeptime);
+        SDL_Delay(1000./60);
+//        SDL_Delay(sleeptime);
 //        SDL_Delay(2000);
     }
     IMG_Quit();

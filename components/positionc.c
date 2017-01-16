@@ -6,7 +6,15 @@
 #include "../event.h"
 
 static void update(Component *self, Entity *e, int dt) {
-    
+    SDL_Rect s = *(SDL_Rect*)self->data;
+    if (s.x + s.w < 0 || s.x > 1024 || s.y + s.h < 0 || s.y > 768) {
+        if (e->id == 2)
+        {
+            printf("ID is 2\n");
+        }
+        printf("Deleting %d\n", e->id);
+        delete_entity(e->id);
+    }
 }
 
 static void cleanup(Component *self) {
