@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <math.h>
 
@@ -80,8 +81,19 @@ void ch_insert(struct ComponentHash *h, const char *key, Component c) {
 
     tail->next = malloc(sizeof(ComponentNode));
     cur = tail->next;
-    cur->key = strdup(key);
+    int keylen = strlen(key) + 1;
+    cur->key = malloc(keylen);
+    snprintf(cur->key, keylen, "%s", key);
     cur->c = c;
+}
+
+void ch_iter(ComponentHash *h, ch_iterator i, void *data) {
+    for (int c = 0; c < BUCKET_SIZE; c++) {
+        ComponentNode *cur = h->components[c].next;
+        while (cur) {
+            i(&cur->c, data);
+        }
+    }
 }
 
 struct ComponentHash *new_component_hash(void) {

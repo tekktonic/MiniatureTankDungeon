@@ -5,6 +5,6 @@
 #include "entity.h"
 #include "team.h"
 
-Entity *new_bullet(int x, int y, double xSpeed, double ySpeed,
+Entity *new_bullet(SDL_Renderer *r, int x, int y, double xSpeed, double ySpeed,
                    Direction direction, Team team);
 #endif

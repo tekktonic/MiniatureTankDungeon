@@ -8,41 +8,55 @@
 #include "sprite.h"
 #include "team.h"
 
+#include "components/drawc.h"
+#include "components/positionc.h"
+
 typedef struct {
     double xSpeed;
     double ySpeed;
     Team t;
     Direction d;
+    int health;
 } Bullet;
 
 
-static void render(Entity *self, SDL_Renderer *r) {
-    draw_sprite(r, SS_CHARACTER, 6, 11, &self->position);
-}
+/*static void render(Component *self, SDL_Renderer *r) {
+    draw_sprite(r, SS_CHARACTER, 6, 11, &((Bullet*)self->data)->position);
+    }*/
 
-static void update(Entity *self, int dt) {
+static void update(Component *self, Entity *e, int dt) {
     Bullet *p = (Bullet*)self->data;
-    self->position.x += p->xSpeed;
-    self->position.y += p->ySpeed;
+    SDL_Rect mov = {.x = p->xSpeed, .y = p->ySpeed};
+    Component *position = ch_get(e->components, "position");
+    position->receive(position, (Event){.t=POSITIONC_MOVE_REL, .d = &mov});
+    
+//    render(self, p->r);
 }
 
-static void cleanup(Entity *self) {
-    free(self->data);
+static void cleanup(Component *self) {
+    free((Bullet*)self->data);
 }
 
-Entity *new_bullet(int x, int y, double xSpeed, double ySpeed,
+Entity *new_bullet(SDL_Renderer *r, int x, int y, double xSpeed, double ySpeed,
                    Direction direction, Team team) {
     Entity *ret = malloc(sizeof(Entity));
-    ret->update = update;
-    ret->render = render;
-    ret->cleanup = cleanup;
-    ret->position = (SDL_Rect){.x = x, .y = y, .w = 16, .h = 16};
-    ret->health = 1;
+    ret->render = malloc(sizeof(Component));
+    *ret->render = new_drawc(r, SS_CHARACTER, 6, 11);
 
-    ret->data = malloc(sizeof(Bullet));
-    Bullet *b = (Bullet*)ret->data;
+    ret->components = new_component_hash();
+    ch_insert(ret->components, "bullet",
+              (Component){.update = update, .cleanup = cleanup});
+
+    ch_insert(ret->components, "position", new_positionc(x, y, 16, 16));
+
+    Component *self = ch_get(ret->components, "bullet");
+    self->data = malloc(sizeof(Bullet));
+    Bullet *b = (Bullet*)self->data;
+
     b->xSpeed = xSpeed;
     b->ySpeed = ySpeed;
+    b->health = 1;
+    
     switch (direction) {
     case DIR_S:
         b->ySpeed += 16.;

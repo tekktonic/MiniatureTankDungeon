@@ -16,7 +16,7 @@ typedef union {
 } EventData;
 
 typedef struct {
-    EventType t;
+    int t;
     EventData d;
 } Event;
 

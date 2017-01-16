@@ -1,10 +1,10 @@
 #include "event.h"
+#include <stddef.h>
 
 bool eq_enqueue(EventQueue *q, Event e){
     if (q->head >= 256)
         return false;
-    q->queue[head++] = e;
-    q->count++;
+    q->queue[q->head++] = e;
     return true;
 }
 

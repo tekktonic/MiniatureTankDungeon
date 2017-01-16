@@ -9,6 +9,7 @@
 #include "sprite.h"
 #include "entity.h"
 #include "player.h"
+#include "component.h"
 
 const unsigned char *keyboard;
 
@@ -56,7 +57,7 @@ int main(int argc, char **argv) {
 
     init_spritesheets(r);
     bool done = false;
-    Entity *player = new_player(512, 384);
+    Entity *player = new_player(r, 512, 384);
 
 
     while (!done) {
@@ -67,16 +68,21 @@ int main(int argc, char **argv) {
         }
 
         keyboard = SDL_GetKeyboardState(NULL);
-        player->update(player, 1000.0/60);
-        if (entities[0])
-            entities[0]->update(entities[0], 1000.0/60);
+ 
         SDL_RenderClear(r);
     
         render_base_room(r);
 
-        player->render(player, r);
-        if (entities[0])
-            entities[0]->render(entities[0], r);
+        player->render->update(player->render, player, 1000.0/60);
+        if (entities[0]) {
+            Component *c = ch_get(entities[0]->components, "bullet");
+            c->update(c, entities[0], 1000.0/60);
+            
+            c = ch_get(entities[0]->components, "position");
+            c->update(c, entities[0], 1000.0/60);
+
+            entities[0]->render->update(entities[0]->render, entities[0], 1000.0/60);
+        }
         SDL_RenderPresent(r);
 
         uint32_t sleeptime = 1000/60.0 - (start_time - SDL_GetTicks());

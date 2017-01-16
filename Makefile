@@ -1,9 +1,14 @@
-LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf
-CFLAGS = -Wall -std=c11 -Wextra
+LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
+CFLAGS = -Wall -std=c11 -Wextra -g
 
-OBJS = topdown.o player.o sprite.o bullet.o
+OBJS = topdown.o player.o sprite.o bullet.o event.o component.o components/drawc.o components/positionc.o
 
 topdown: $(OBJS)
 
 clean:
-	find . -name "*~" -or -name "*.o" -or -name "topdown" -exec rm {} \;
+	find . -name "*.o" -exec rm {} \;
+	find . -name "*~" -exec rm {} \;
+	find . -name "\#*\#" -exec rm {} \;
+	find . -name ".\#*" -exec rm {} \;
+	find . -name topdown -exec rm {} \;
+
