@@ -28,8 +28,7 @@ static void update(Component *self, Entity *e, int dt) {
     Bullet *p = (Bullet*)self->data;
     SDL_Rect mov = {.x = p->xSpeed, .y = p->ySpeed};
     Component *position = ch_get(e->components, "position");
-    position->receive(position, (Event){.t=POSITIONC_MOVE_REL, .d = &mov});
-    
+    c_send(position, (Event){.t=POSITIONC_MOVE_REL, .d = &mov});
 //    render(self, p->r);
 }
 

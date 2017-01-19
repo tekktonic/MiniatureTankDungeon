@@ -102,8 +102,16 @@ struct ComponentHash *new_component_hash(void) {
     ComponentHash *ret = malloc(sizeof(ComponentHash));
     // Could also memcpy
     for (int i = 0; i < BUCKET_SIZE; i++) {
-        ret->components[i] = (ComponentNode){0};
+        ret->components[i] = (ComponentNode){.key=0};
     }
 
     return ret;
+}
+
+bool c_send(Component *c, EventData d) {
+    if (c->receive) {
+        c->receive(c, d);
+        return true;
+    }
+    return false;
 }
