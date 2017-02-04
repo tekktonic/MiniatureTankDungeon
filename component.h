@@ -17,7 +17,7 @@ typedef struct Component {
     void *data;
 } Component;
 
-bool c_send(Component *c, EventData d);
+bool c_send(Component *c, Event d);
 
 struct ComponentHash;
 typedef void (*ch_iterator)(Component *c, void *data);

@@ -108,7 +108,7 @@ struct ComponentHash *new_component_hash(void) {
     return ret;
 }
 
-bool c_send(Component *c, EventData d) {
+bool c_send(Component *c, Event d) {
     if (c->receive) {
         c->receive(c, d);
         return true;
