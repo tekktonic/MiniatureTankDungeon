@@ -4,6 +4,7 @@
 
 #include "../component.h"
 #include "../sprite.h"
+#include "../entity.h"
 
 typedef enum {
     DRAWC_ROW,
@@ -11,6 +12,6 @@ typedef enum {
     DRAWC_SHEET
 } DrawCEvents;
 
-Component new_drawc(SDL_Renderer *r, Spritesheets sheet, int row, int col);
+Component new_drawc(Entity *e, SDL_Renderer *r, Spritesheets sheet, int row, int col);
 
 #endif

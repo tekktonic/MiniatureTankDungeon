@@ -6,6 +6,8 @@
 #include <string.h>
 #include <math.h>
 
+#include "entity.h"
+
 typedef struct ComponentNode {
     Component c;
     char *key;
@@ -105,6 +107,12 @@ struct ComponentHash *new_component_hash(void) {
         ret->components[i] = (ComponentNode){.key=0};
     }
 
+    return ret;
+}
+
+Component c_make(Entity *e, updatefun update, cleanupfun cleanup, receivefun receive,
+                 queryfun query) {
+    Component ret = {.owner=e, .update=update, .cleanup=cleanup, .receive=receive};
     return ret;
 }
 

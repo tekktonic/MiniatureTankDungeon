@@ -1,7 +1,11 @@
 LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lm
 CFLAGS = -Wall -std=c11 -Wextra -g -O0
 
-OBJS = topdown.o entity.o player.o sprite.o bullet.o event.o component.o components/drawc.o components/positionc.o 
+COMPONENTS = components/drawc.o components/positionc.o
+COMPONENTS += components/basic_collidec.o components/team_collidec.o components/teamc.o
+
+OBJS = topdown.o entity.o player.o sprite.o
+OBJS += bullet.o event.o component.o direction.o wall.o $(COMPONENTS)
 
 topdown: $(OBJS)
 

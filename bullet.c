@@ -6,15 +6,15 @@
 #include "direction.h"
 #include "keyboard.h"
 #include "sprite.h"
-#include "team.h"
+
 
 #include "components/drawc.h"
 #include "components/positionc.h"
-
+#include "components/team_collidec.h"
+#include "components/teamc.h"
 typedef struct {
     double xSpeed;
     double ySpeed;
-    Team t;
     Direction d;
     int health;
 } Bullet;
@@ -37,17 +37,20 @@ static void cleanup(Component *self) {
 }
 
 Entity *new_bullet(SDL_Renderer *r, int x, int y, double xSpeed, double ySpeed,
-                   Direction direction, Team team) {
+                   Direction direction, Teams team, Entity **entities) {
     Entity *ret = malloc(sizeof(Entity));
     ret->render = malloc(sizeof(Component));
-    *ret->render = new_drawc(r, SS_CHARACTER, 6, 11);
+    *ret->render = new_drawc(ret, r, SS_CHARACTER, 6, 11);
 
     ret->components = new_component_hash();
     ch_insert(ret->components, "bullet",
               (Component){.update = update, .cleanup = cleanup});
 
-    ch_insert(ret->components, "position", new_positionc(x, y, 16, 16));
+    ch_insert(ret->components, "position", new_positionc(ret, x, y, 16, 16));
 
+    ch_insert(ret->components, "collide", new_team_collidec(ret, entities));
+    ch_insert(ret->components, "team", new_teamc(ret, TEAM_PLAYER));
+    
     Component *self = ch_get(ret->components, "bullet");
     self->data = malloc(sizeof(Bullet));
     Bullet *b = (Bullet*)self->data;
@@ -58,20 +61,19 @@ Entity *new_bullet(SDL_Renderer *r, int x, int y, double xSpeed, double ySpeed,
     
     switch (direction) {
     case DIR_S:
-        b->ySpeed += 16.;
+        b->ySpeed += 1.;
         break;
     case DIR_W:
-        b->xSpeed -= 16.;
+        b->xSpeed -= 1.;
         break;
     case DIR_E:
-        b->xSpeed += 16.;
+        b->xSpeed += 1.;
         break;
     case DIR_N:
-        b->ySpeed -= 16.;
+        b->ySpeed -= 1.;
         break;
     }
     
     b->d = direction;
-    b->t = team;
     return ret;
 }

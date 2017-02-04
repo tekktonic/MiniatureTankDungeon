@@ -19,6 +19,7 @@ typedef struct {
     SDL_Rect position;
     double invincible;
     SDL_Renderer *r;
+    Entity **entities;
 } Player;
 
 
@@ -77,19 +78,22 @@ static void update(Component *self, Entity *e, int dt) {
     Entity *bullet= NULL;
     if (keyboard[SDL_SCANCODE_W]) {
         bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
-                                 p->ySpeed, DIR_N, TEAM_PLAYER);
+                                 p->ySpeed, DIR_N, TEAM_PLAYER, p->entities);
     }
     else if (keyboard[SDL_SCANCODE_D]) {
         bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
-                                 p->ySpeed, DIR_E, TEAM_PLAYER);        
+                                 p->ySpeed, DIR_E, TEAM_PLAYER, p->entities);        
     }
     else if (keyboard[SDL_SCANCODE_S]) {
         bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
-                                 p->ySpeed, DIR_S, TEAM_PLAYER);
+                           p->ySpeed, DIR_S, TEAM_PLAYER, p->entities);
     }
     else if (keyboard[SDL_SCANCODE_A]) {
-        bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
-                                 p->ySpeed, DIR_W, TEAM_PLAYER);
+        if (!p->invincible){
+        bullet= new_bullet(p->r, p->position.x, p->position.y, /*p->xSpeed,
+                                                                 p->ySpeed,*/0, 0,  DIR_W, TEAM_PLAYER, p->entities);
+        p->invincible = 60;
+        }
     }
 
     if (bullet)
@@ -105,11 +109,11 @@ static void cleanup(Component *self) {
     free((Player*)self->data);
 }
 
-Entity *new_player(SDL_Renderer *r, int x, int y) {
+Entity *new_player(SDL_Renderer *r, int x, int y, Entity **entities) {
     Entity *ret = malloc(sizeof(Entity));
 
     ret->render = malloc(sizeof(Component));
-    *ret->render = (Component){.update = update, .cleanup = cleanup};
+    *ret->render = (Component){.owner=ret, .update=update, .cleanup=cleanup};
 
     ret->components = new_component_hash();
 /*    ret->update = update;
@@ -127,6 +131,6 @@ Entity *new_player(SDL_Renderer *r, int x, int y) {
     p->position = (SDL_Rect){.x = x, .y = y};
     p->health = 8;
     p->r = r;
-    
+    p->entities = entities;
     return ret;
 }

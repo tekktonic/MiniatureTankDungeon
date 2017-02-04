@@ -42,8 +42,8 @@ static void receive(Component *self, Event e) {
     callbacks[e.t](self, e.d);
 }
 
-Component new_drawc(SDL_Renderer *r, Spritesheets sheet, int row, int col) {
-    Component ret = {.cleanup = cleanup, .update = update, .receive = receive};
+Component new_drawc(Entity *e, SDL_Renderer *r, Spritesheets sheet, int row, int col) {
+    Component ret = c_make(e, update, cleanup, receive, NULL);
     ret.data = malloc(sizeof(Draw));
     Draw *d = (Draw*)ret.data;
     d->r = r;

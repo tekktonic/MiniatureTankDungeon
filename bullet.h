@@ -6,5 +6,5 @@
 #include "team.h"
 
 Entity *new_bullet(SDL_Renderer *r, int x, int y, double xSpeed, double ySpeed,
-                   Direction direction, Team team);
+                   Direction direction, Team team, Entity **entities);
 #endif

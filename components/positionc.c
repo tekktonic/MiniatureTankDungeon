@@ -23,7 +23,7 @@ static void cleanup(Component *self) {
 
 static void move(Component *self, EventData d) {
     SDL_Rect *r = (SDL_Rect*)d.data;
-        SDL_Rect *s = (SDL_Rect*)self->data;
+    SDL_Rect *s = (SDL_Rect*)self->data;
     s->x = r->x;
     s->y = r->y;
 }
@@ -45,8 +45,8 @@ static void receive(Component *self, Event e) {
 }
 
 
-Component new_positionc(int x, int y, int w, int h) {
-    Component ret = {.update = update, .cleanup = cleanup, .receive = receive};
+Component new_positionc(Entity *e, int x, int y, int w, int h) {
+    Component ret = c_make(e, update, cleanup, receive, NULL);
     ret.data = malloc(sizeof(SDL_Rect));
 
     *(SDL_Rect*)ret.data = (SDL_Rect){.x = x, .y = y, .w = w, .h = h};

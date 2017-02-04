@@ -10,6 +10,7 @@
 #include "entity.h"
 #include "player.h"
 #include "component.h"
+#include "wall.h"
 
 const unsigned char *keyboard;
 
@@ -64,8 +65,8 @@ int main(int argc, char **argv) {
         entities[i] = NULL;
     }
     delete_clear();
-    add_entity(new_player(r, 512, 384));
-
+    add_entity(new_player(r, 512, 384, entities));
+    add_entity(new_wall(r, entities));
 
     while (!done) {
         uint32_t start_time = SDL_GetTicks();
