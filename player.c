@@ -45,8 +45,7 @@ static void render(Component *self, SDL_Renderer *r) {
         draw_sprite(r, SS_CHARACTER, 4+p->d, 1, &p->position);
         time = (time == 0 ? blinky = !blinky, 4 : time-1);
     }
-    else
-    {
+    else {
         time = (time == 0 ? blinky = !blinky, 4 : time-1);
     }
 
@@ -72,29 +71,29 @@ static void update(Component *self, Entity *e, int dt) {
         p->health--;
         p->invincible = 60.;
     }
+
     else
         p->invincible = p->invincible == 0 ? p->invincible : p->invincible-1;
 
     Entity *bullet= NULL;
     if (keyboard[SDL_SCANCODE_W]) {
         bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
-                                 p->ySpeed, DIR_N, TEAM_PLAYER, p->entities);
+                           p->ySpeed, DIR_N, TEAM_PLAYER, p->entities);
     }
     else if (keyboard[SDL_SCANCODE_D]) {
         bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
-                                 p->ySpeed, DIR_E, TEAM_PLAYER, p->entities);        
+                           p->ySpeed, DIR_E, TEAM_PLAYER, p->entities);        
     }
     else if (keyboard[SDL_SCANCODE_S]) {
         bullet= new_bullet(p->r, p->position.x, p->position.y, p->xSpeed,
                            p->ySpeed, DIR_S, TEAM_PLAYER, p->entities);
     }
     else if (keyboard[SDL_SCANCODE_A]) {
-        if (!p->invincible){
         bullet= new_bullet(p->r, p->position.x, p->position.y, /*p->xSpeed,
                                                                  p->ySpeed,*/0, 0,  DIR_W, TEAM_PLAYER, p->entities);
         p->invincible = 60;
-        }
     }
+
 
     if (bullet)
         add_entity(bullet);
@@ -116,11 +115,11 @@ Entity *new_player(SDL_Renderer *r, int x, int y, Entity **entities) {
     *ret->render = (Component){.owner=ret, .update=update, .cleanup=cleanup};
 
     ret->components = new_component_hash();
-/*    ret->update = update;
-    ret->render = render;
-    ret->cleanup = cleanup;
-    ret->position = (SDL_Rect){.x = x, .y = y};
-    ret->health = 8;*/
+    /*    ret->update = update;
+          ret->render = render;
+          ret->cleanup = cleanup;
+          ret->position = (SDL_Rect){.x = x, .y = y};
+          ret->health = 8;*/
 
     ret->render->data = malloc(sizeof(Player));
     Player *p = (Player*)ret->render->data;

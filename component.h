@@ -6,7 +6,7 @@ struct Component;
 typedef void (*updatefun)(struct Component *c, struct Entity *e, int dt);
 typedef void (*cleanupfun)(struct Component *c);
 typedef void (*receivefun)(struct Component *c, Event e);
-typedef void (*queryfun)(struct Component *c, int type);
+typedef void (**queryfun)(struct Component *c, int type);
 
 // Just for convenience, not every callback has to conform
 typedef void (*receivecb)(struct Component *c, EventData d);

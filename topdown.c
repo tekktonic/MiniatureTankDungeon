@@ -45,7 +45,8 @@ void render_base_room(SDL_Renderer *r) {
 }
 
 void update_components(Component *c, void *data) {
-    c->update(c, (Entity*)data, 1000.0/60);
+    if (c->update)
+        c->update(c, (Entity*)data, 1000.0/60);
 }
 
 int main(int argc, char **argv) {

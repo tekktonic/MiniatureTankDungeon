@@ -1,8 +1,8 @@
 #include "teamc.h"
 
-typedef struct Team {
+typedef struct {
     Teams t;
-};
+}Team;
 
 void update(Component *c, Entity *e, int dt){}
 void cleanup(Component *c){}

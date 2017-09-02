@@ -1,5 +1,9 @@
-* BLOCKED Player
+* TODO Player
+** TODO Split into more components
+*** Living (health)
+*** Moving (xSpeed, ySpeed, momentum)
+*** Spawner (spawns entities.)
 * TODO Enemies
 * TODO Room Generation
-* BLOCKED Bullets
+* TODO Bullets
 
